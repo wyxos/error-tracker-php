@@ -11,6 +11,12 @@ class ErrorTracker
 {
     public static function handle(\Throwable $throwable)
     {
+        $token = config('error-tracker.api_token');
+
+        if(!$token){
+            throw new \Exception('ERROR_TRACKER_TOKEN not defined in env.');
+        }
+
         try {
             $client = new Client();
 
@@ -80,7 +86,7 @@ class ErrorTracker
                     'method' => $_SERVER['REQUEST_METHOD'],
                     'environment' => app()->environment()
                 ],
-                'api_token' => config('error-tracker.api_token')
+                'api_token' => $token
             ];
 
             $response = $client->post('https://error-tracker.test/api/issues/store', [

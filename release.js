@@ -21,7 +21,7 @@
     execSync('git add .')
     console.log('Files staged.')
 
-    execSync(`git commit -m "Release ${version}"`)
+    execSync(`git commit -m "feat: release ${version}"`)
     console.log('Files committed.')
 
     execSync(`git tag ${version}`)
