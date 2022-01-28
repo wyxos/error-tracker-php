@@ -1,0 +1,25 @@
+{
+    "name": "wyxos/error-tracker-php",
+    "description": "A plugin to log php exceptions into the Error Tracker service.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Wyxos\\ErrorTracker\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Wyxos",
+            "email": "joey.jaulimsing@live.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Wyxos\\ErrorTracker\\TrackerServiceProvider"
+            ]
+        }
+    },
+    "require": {}
+}
