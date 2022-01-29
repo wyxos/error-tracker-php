@@ -18,6 +18,14 @@
         }
     })
 
+    const fs = require('fs')
+
+    const json = JSON.parse(fs.readFileSync('./package.json'))
+
+    json.version = version
+
+    fs.writeFileSync('./package.json', JSON.stringify(json))
+
     execSync('git add .')
     console.log('Files staged.')
 
