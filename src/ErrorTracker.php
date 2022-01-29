@@ -89,7 +89,7 @@ class ErrorTracker
                 'api_token' => $token
             ];
 
-            $response = $client->post('https://error-tracker.test/api/issues/store', [
+            $response = $client->post('https://error-tracker.wyxos.com/api/issues/store', [
                 RequestOptions::JSON => $data
             ]);
 
