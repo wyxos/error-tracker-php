@@ -11,7 +11,7 @@ class IssueTestCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'issue:test {env=local}';
+    protected $signature = 'issue:test {env=production}';
 
     /**
      * The console command description.
