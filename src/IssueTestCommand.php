@@ -11,7 +11,7 @@ class IssueTestCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'issue:test';
+    protected $signature = 'issue:test {env=local}';
 
     /**
      * The console command description.
@@ -39,7 +39,13 @@ class IssueTestCommand extends Command
     {
        $exception = new \Exception('This is a sample exception.');
 
-       ErrorTracker::instance()->capture($exception);
+       $env = \Str::upper($this->option('env'));
+
+       $base = $env . '_URL';
+
+       ErrorTracker::instance()
+           ->setBaseUrl(constant("\\Wyxos\\ErrorTracker\\ErrorTracker::$base"))
+           ->capture($exception);
 
        return 0;
     }

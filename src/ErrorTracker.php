@@ -26,7 +26,7 @@ class ErrorTracker
     /**
      * @const string
      */
-    const PRODUCTION_URL = '';
+    const PRODUCTION_URL = 'https://error-tracker.wyxos.com';
 
     /**
      * @var string
@@ -46,7 +46,7 @@ class ErrorTracker
      */
     public static function instance(): ErrorTracker
     {
-        return new static;
+        return new ErrorTracker();
     }
 
     /**
@@ -75,7 +75,9 @@ class ErrorTracker
         try {
             $client = new Client();
 
-            return $client->post($this->base . '/api/issues/store', [
+            $uri = $this->base . '/api/issues/store';
+
+            return $client->post($uri, [
                 RequestOptions::JSON => [
                     'content' => $this->buildContent($throwable),
                     'api_token' => $token
@@ -104,9 +106,12 @@ class ErrorTracker
             'file' => $throwable->getFile()
         ]);
 
-        foreach ($trace as &$item) {
+        $callbacks = explode("\n", $throwable->getTraceAsString());
+
+        foreach ($trace as $index => &$item) {
             $item['function'] = '';
             $item['code'] = [];
+            $item['callback'] = preg_replace('/.*:(.*)/', '$1', $callbacks[$index]);
 
             if (isset($item['file'])) {
                 $lines = file($item['file']);
