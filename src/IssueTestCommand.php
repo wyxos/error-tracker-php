@@ -11,7 +11,7 @@ class IssueTestCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'issue:test {env=production}';
+    protected $signature = 'issue:test {--base=production}';
 
     /**
      * The console command description.
@@ -39,7 +39,7 @@ class IssueTestCommand extends Command
     {
        $exception = new \Exception('This is a sample exception.');
 
-       $env = \Str::upper($this->option('env'));
+       $env = \Str::upper($this->option('base'));
 
        $base = $env . '_URL';
 

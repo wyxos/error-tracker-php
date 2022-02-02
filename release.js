@@ -36,5 +36,8 @@
     console.log('Tag version added.')
 
     execSync(`git push origin ${version}`)
+    console.log('Pushing tag.')
+
+    execSync(`git push origin master`)
     console.log('Push complete.')
 }())
