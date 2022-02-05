@@ -180,7 +180,8 @@ class ErrorTracker
             'session' => session()->all(),
             'agent' => $_SERVER['HTTP_USER_AGENT'] ?? null,
             'method' => $_SERVER['REQUEST_METHOD'] ?? null,
-            'environment' => app()->environment()
+            'environment' => app()->environment(),
+            'type' => 'php',
         ];
     }
 }
