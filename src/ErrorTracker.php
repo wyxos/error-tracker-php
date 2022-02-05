@@ -111,7 +111,7 @@ class ErrorTracker
         foreach ($trace as $index => &$item) {
             $item['function'] = '';
             $item['code'] = [];
-            $item['callback'] = preg_replace('/.*:(.*)/', '$1', $callbacks[$index]);
+            $item['callback'] = preg_replace('/^#\d+ (.*:)?(.*)/', '$2', $callbacks[$index]);
 
             if (isset($item['file'])) {
                 $lines = file($item['file']);
@@ -127,6 +127,8 @@ class ErrorTracker
                 }
             }
         }
+
+        dd($trace);
 
         return $trace;
     }
