@@ -128,8 +128,6 @@ class ErrorTracker
             }
         }
 
-        dd($trace);
-
         return $trace;
     }
 
