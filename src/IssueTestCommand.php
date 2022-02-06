@@ -2,7 +2,9 @@
 
 namespace Wyxos\ErrorTracker;
 
+use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 
 class IssueTestCommand extends Command
 {
@@ -37,16 +39,16 @@ class IssueTestCommand extends Command
      */
     public function handle(): int
     {
-       $exception = new \Exception('This is a sample exception.');
+        $exception = new Exception('This is a sample exception.');
 
-       $env = \Str::upper($this->option('base'));
+        $env = Str::upper($this->option('base'));
 
-       $base = $env . '_URL';
+        $base = $env . '_URL';
 
-       ErrorTracker::instance()
-           ->setBaseUrl(constant("\\Wyxos\\ErrorTracker\\ErrorTracker::$base"))
-           ->capture($exception);
+        ErrorTracker::instance()
+            ->setBaseUrl(constant("\\Wyxos\\ErrorTracker\\ErrorTracker::$base"))
+            ->capture($exception);
 
-       return 0;
+        return 0;
     }
 }

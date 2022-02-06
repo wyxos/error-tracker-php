@@ -8,7 +8,8 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\RequestOptions;
-use Log;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Throwable;
 
 class ErrorTracker
@@ -17,6 +18,11 @@ class ErrorTracker
      * @const string
      */
     const LOCAL_URL = 'https://error-tracker.test';
+
+    /**
+     * @const string
+     */
+    const TESTING_URL = 'https://error-tracker.test';
 
     /**
      * @const string
@@ -34,6 +40,11 @@ class ErrorTracker
     protected $base = ErrorTracker::DEVELOPMENT_URL;
 
     /**
+     * @var array
+     */
+    protected $environmentToExclude = ['testing'];
+
+    /**
      * @throws Exception|GuzzleException
      */
     public static function handle(Throwable $throwable)
@@ -47,6 +58,22 @@ class ErrorTracker
     public static function instance(): ErrorTracker
     {
         return new ErrorTracker();
+    }
+
+    public function excludeEnvironment(array $array = [])
+    {
+        $this->environmentToExclude = $array;
+    }
+
+    public function setBase()
+    {
+        $env = Str::upper(app()->environment());
+
+        $base = $env . '_URL';
+
+        $this->setBaseUrl(constant("\\Wyxos\\ErrorTracker\\ErrorTracker::$base"));
+
+        return $this;
     }
 
     /**
@@ -66,6 +93,16 @@ class ErrorTracker
      */
     public function capture(Throwable $throwable)
     {
+        if (app()->environment($this->environmentToExclude)) {
+            $excludes = join(',', $this->environmentToExclude);
+
+            \Illuminate\Support\Facades\Log::warning(
+                "Error tracker is configured to not run on the following environments {$excludes}"
+            );
+
+            return false;
+        }
+
         $token = config('error-tracker.api_token');
 
         if (!$token) {
@@ -84,7 +121,9 @@ class ErrorTracker
                 ]
             ]);
         } catch (ServerException $throwable) {
-            $str = 'Failed to log error: ' . $throwable
+            $str =
+                'Failed to log error: ' .
+                $throwable
                     ->getResponse()
                     ->getBody()
                     ->getContents();
@@ -140,14 +179,14 @@ class ErrorTracker
         $body = '';
 
         if ($throwable instanceof ServerException) {
-            $body = (string)$throwable
+            $body = (string) $throwable
                 ->getResponse()
                 ->getBody()
                 ->getContents();
         }
 
         if ($throwable instanceof RequestException) {
-            $body = (string)$throwable
+            $body = (string) $throwable
                 ->getResponse()
                 ->getBody()
                 ->getContents();
@@ -164,8 +203,7 @@ class ErrorTracker
     {
         $user = auth()->user();
 
-        $route = request()
-            ->route();
+        $route = request()->route();
 
         return [
             'instance' => get_class($throwable),
@@ -181,7 +219,7 @@ class ErrorTracker
             'agent' => $_SERVER['HTTP_USER_AGENT'] ?? null,
             'method' => $_SERVER['REQUEST_METHOD'] ?? null,
             'environment' => app()->environment(),
-            'type' => 'php',
+            'type' => 'php'
         ];
     }
 }
