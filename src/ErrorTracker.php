@@ -65,9 +65,11 @@ class ErrorTracker
         $this->environmentToExclude = $array;
     }
 
-    public function setBase()
+    public function setBase(string $environment = null)
     {
-        $env = Str::upper(app()->environment());
+        $env = $environment ?: app()->environment();
+
+        $env = Str::upper($env);
 
         $base = $env . '_URL';
 
@@ -147,6 +149,10 @@ class ErrorTracker
 
         $callbacks = explode("\n", $throwable->getTraceAsString());
 
+        $isVendor = false;
+
+        $format = [];
+
         foreach ($trace as $index => &$item) {
             $item['function'] = '';
             $item['code'] = [];
@@ -164,6 +170,37 @@ class ErrorTracker
                 for ($i = $start; $i <= $lastLine; $i++) {
                     $item['code'][$i + 1] = $lines[$i];
                 }
+            }
+
+            if ($index === 0) {
+                $format[] = [
+                    'trace' => [$item]
+                ];
+
+                continue;
+            }
+
+            if (preg_match('/vendor\/.*/', $item['file'])) {
+                if ($isVendor) {
+                    $format[count($format) - 1][] = $item;
+                } else {
+                    $isVendor = true;
+                    $format[] = [
+                        'vendor' => $item
+                    ];
+                }
+
+                continue;
+            }
+
+            if ($isVendor) {
+                $isVendor = false;
+
+                $format[] = [
+                    'trace' => $item
+                ];
+            } else {
+                $format[count($format) - 1][] = $item;
             }
         }
 
