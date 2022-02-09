@@ -98,9 +98,7 @@ class ErrorTracker
         if (app()->environment($this->environmentToExclude)) {
             $excludes = join(',', $this->environmentToExclude);
 
-            \Illuminate\Support\Facades\Log::warning(
-                "Error tracker is configured to not run on the following environments {$excludes}"
-            );
+            Log::warning("Error tracker is configured to not run on the following environments {$excludes}");
 
             return false;
         }
@@ -174,7 +172,8 @@ class ErrorTracker
 
             if ($index === 0) {
                 $format[] = [
-                    'trace' => [$item]
+                    'trace' => [$item],
+                    'vendor' => false
                 ];
 
                 continue;
@@ -182,11 +181,12 @@ class ErrorTracker
 
             if (preg_match('/vendor\/.*/', $item['file'])) {
                 if ($isVendor) {
-                    $format[count($format) - 1][] = $item;
+                    $format[count($format) - 1]['trace'][] = $item;
                 } else {
                     $isVendor = true;
                     $format[] = [
-                        'vendor' => $item
+                        'vendor' => true,
+                        'trace' => [$item]
                     ];
                 }
 
@@ -197,14 +197,15 @@ class ErrorTracker
                 $isVendor = false;
 
                 $format[] = [
-                    'trace' => $item
+                    'trace' => [$item],
+                    'vendor' => false
                 ];
             } else {
-                $format[count($format) - 1][] = $item;
+                $format[count($format) - 1]['trace'][] = $item;
             }
         }
 
-        return $trace;
+        return $format;
     }
 
     /**
