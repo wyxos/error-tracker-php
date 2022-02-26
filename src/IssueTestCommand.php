@@ -49,6 +49,6 @@ class IssueTestCommand extends Command
             ->setBaseUrl(constant("\\Wyxos\\ErrorTracker\\ErrorTracker::$base"))
             ->capture($exception);
 
-        return 0;
+        $this->info('Test error sent successfully.');
     }
 }

@@ -63,6 +63,8 @@ class ErrorTracker
     public function excludeEnvironment(array $array = [])
     {
         $this->environmentToExclude = $array;
+
+        return $this;
     }
 
     public function setBase(string $environment = null)
