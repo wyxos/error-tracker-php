@@ -105,23 +105,25 @@ class ErrorTracker
             return false;
         }
 
-        $token = config('error-tracker.api_token');
-
-        if (!$token) {
-            throw new Exception('ERROR_TRACKER_TOKEN not defined in env.');
-        }
-
         try {
+            $token = config('error-tracker.api_token');
+
+            if (!$token) {
+                throw new Exception('ERROR_TRACKER_TOKEN not defined in env.');
+            }
+
             $client = new Client();
 
             $uri = $this->base . '/api/issues/store';
 
-            return $client->post($uri, [
+            $client->post($uri, [
                 RequestOptions::JSON => [
                     'content' => $this->buildContent($throwable),
                     'api_token' => $token
                 ]
             ]);
+
+            return true;
         } catch (ServerException $throwable) {
             $str =
                 'Failed to log error: ' .
@@ -131,27 +133,31 @@ class ErrorTracker
                     ->getContents();
 
             Log::error($str);
+
+            return false;
         }
     }
 
     public function connect()
     {
-        $token = config('error-tracker.api_token');
-
-        if (!$token) {
-            throw new Exception('ERROR_TRACKER_TOKEN not defined in env.');
-        }
-
         try {
+            $token = config('error-tracker.api_token');
+
+            if (!$token) {
+                throw new Exception('ERROR_TRACKER_TOKEN not defined in env.');
+            }
+
             $client = new Client();
 
             $uri = $this->base . '/api/project/connect';
 
-            return $client->post($uri, [
+            $client->post($uri, [
                 RequestOptions::JSON => [
                     'api_token' => $token
                 ]
             ]);
+
+            return true;
         } catch (ServerException $throwable) {
             $str =
                 'Failed to log error: ' .
@@ -161,6 +167,8 @@ class ErrorTracker
                     ->getContents();
 
             Log::error($str);
+
+            return false;
         }
     }
 
