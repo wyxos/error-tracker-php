@@ -1,19 +1,20 @@
 <?php
 
-namespace Wyxos\ErrorTracker;
+namespace Wyxos\ErrorTracker\Commands;
 
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use Wyxos\ErrorTracker\ErrorTracker;
 
-class IssueTestCommand extends Command
+class TestCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'issue:test {--base=production}';
+    protected $signature = 'error-tracker:test {--base=production}';
 
     /**
      * The console command description.
@@ -50,5 +51,7 @@ class IssueTestCommand extends Command
             ->capture($exception);
 
         $this->info('Test error sent successfully.');
+
+        return 0;
     }
 }

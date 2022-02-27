@@ -3,13 +3,16 @@
 namespace Wyxos\ErrorTracker;
 
 use Illuminate\Support\ServiceProvider;
+use Wyxos\ErrorTracker\Commands\ConnectCommand;
+use Wyxos\ErrorTracker\Commands\SetupCommand;
+use Wyxos\ErrorTracker\Commands\TestCommand;
 
 class TrackerServiceProvider extends ServiceProvider
 {
     public function boot()
     {
         if ($this->app->runningInConsole()) {
-            $this->commands([IssueTestCommand::class]);
+            $this->commands([TestCommand::class, ConnectCommand::class, SetupCommand::class]);
         }
 
         $this->publishes([

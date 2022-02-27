@@ -134,6 +134,36 @@ class ErrorTracker
         }
     }
 
+    public function connect()
+    {
+        $token = config('error-tracker.api_token');
+
+        if (!$token) {
+            throw new Exception('ERROR_TRACKER_TOKEN not defined in env.');
+        }
+
+        try {
+            $client = new Client();
+
+            $uri = $this->base . '/api/project/connect';
+
+            return $client->post($uri, [
+                RequestOptions::JSON => [
+                    'api_token' => $token
+                ]
+            ]);
+        } catch (ServerException $throwable) {
+            $str =
+                'Failed to log error: ' .
+                $throwable
+                    ->getResponse()
+                    ->getBody()
+                    ->getContents();
+
+            Log::error($str);
+        }
+    }
+
     /**
      * @param Throwable $throwable
      * @return array
