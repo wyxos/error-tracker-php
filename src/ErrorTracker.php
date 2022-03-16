@@ -42,7 +42,7 @@ class ErrorTracker
     /**
      * @var array
      */
-    protected $environmentToExclude = ['testing'];
+    protected $environmentToExclude = ['testing', 'local'];
 
     /**
      * @throws Exception|GuzzleException
@@ -62,7 +62,7 @@ class ErrorTracker
 
     public function excludeEnvironment(array $array = [])
     {
-        $this->environmentToExclude = $array;
+        $this->environmentToExclude = array_merge($this->environmentToExclude, $array);
 
         return $this;
     }
