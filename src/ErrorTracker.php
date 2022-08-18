@@ -42,7 +42,7 @@ class ErrorTracker
     /**
      * @var array
      */
-    protected $environmentToExclude = ['testing', 'local'];
+    protected $environmentToExclude = ['testing'];
 
     /**
      * @throws Exception|GuzzleException
